@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IYE - Designed for Comfort, Made to Last</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f5f5f5;
+            --surface: rgba(255, 255, 255, 0.96);
+            --text: #333;
+            --muted: #666;
+            --card: #ffffff;
+            --border: rgba(0, 0, 0, 0.08);
+            --shadow: 0 12px 30px rgba(0,0,0,0.08);
+            --sidebar: #1a1a1a;
+            --sidebar-text: #fff;
+            --header: #ffffff;
+            --hero-start: #f5f5f5;
+            --hero-end: #e8e8e8;
+        }
+
+        [data-theme='dark'] {
+            color-scheme: dark;
+            --bg: #0f172a;
+            --surface: rgba(15, 23, 42, 0.95);
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --card: #111827;
+            --border: rgba(255, 255, 255, 0.08);
+            --shadow: 0 20px 60px rgba(0,0,0,0.45);
+            --sidebar: #111827;
+            --sidebar-text: #e2e8f0;
+            --header: rgba(15, 23, 42, 0.92);
+            --hero-start: #111827;
+            --hero-end: #1f2937;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            display: flex;
+            color: var(--text);
+        }
+        
+        /* Боковое меню */
+        .sidebar {
+            width: 72px;
+            background-color: #1a1a1a;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 20px 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+            z-index: 1000;
+            overflow: hidden;
+            transition: width 0.3s ease;
+        }
+
+        .sidebar:hover {
+            width: 250px;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+            margin-top: 20px;
+        }
+        
+        .sidebar ul li {
+            margin: 0;
+        }
+        
+        .sidebar ul li a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: var(--sidebar-text);
+            padding: 15px 14px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            position: relative;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        
+        .sidebar ul li a:hover {
+            background-color: #2a2a2a;
+            border-left-color: #333;
+            color: #ddd;
+            text-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        .sidebar ul li a span {
+            display: inline-block;
+            max-width: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-width 0.3s ease, opacity 0.3s ease;
+        }
+
+        .sidebar:hover ul li a span {
+            max-width: 160px;
+            opacity: 1;
+        }
+        
+        .sidebar ul li a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background: #555;
+            transition: width 0.3s ease;
+        }
+        
+        .sidebar ul li a:hover::before {
+            width: 100%;
+        }
+        
+        /* Основной контент */
+        .main-content {
+            margin-left: 72px;
+            width: calc(100% - 72px);
+            display: flex;
+            flex-direction: column;
+            transition: margin-left 0.3s ease, width 0.3s ease;
+        }
+
+        .sidebar:hover + .main-content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
+        
+        header {
+            background-color: var(--header);
+            color: var(--text);
+            padding: 30px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--border);
+            backdrop-filter: blur(14px);
+        }
+        
+        .logo-container {
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo-container:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo-container svg {
+            height: 50px;
+            width: auto;
+        }
+        
+        .theme-toggle {
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            padding: 10px 18px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.25s ease, background 0.25s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-1px);
+            background: rgba(255,255,255,0.9);
+        }
+
+        header h1 {
+            text-align: center;
+            flex-grow: 1;
+            font-size: 32px;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+        
+        .container {
+            flex-grow: 1;
+            width: 100%;
+            max-width: 100%;
+            overflow-y: auto;
+        }
+        
+        /* Главная секция */
+        .hero-section {
+            position: relative;
+            background: linear-gradient(135deg, var(--hero-start) 0%, var(--hero-end) 100%);
+            padding: 80px 40px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-section::before,
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.55;
+            pointer-events: none;
+        }
+
+        .hero-section::before {
+            width: 260px;
+            height: 260px;
+            background: rgba(247, 115, 22, 0.16);
+            top: -70px;
+            right: -40px;
+        }
+
+        .hero-section::after {
+            width: 180px;
+            height: 180px;
+            background: rgba(14, 165, 233, 0.18);
+            bottom: -50px;
+            left: 20px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 999px;
+            background: rgba(247, 115, 22, 0.15);
+            color: var(--accent);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(247, 115, 22, 0.22);
+        }
+
+        .hero-content h2 {
+            font-size: 52px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+        
+        .hero-content p {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .hero-tagline {
+            font-size: 20px;
+            color: #999;
+            font-style: italic;
+            margin-top: 30px;
+        }
+        
+        /* Сетка товаров */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .product-section {
+            background: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .product-section:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 18px 36px rgba(0,0,0,0.18);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: #ccc;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.45s ease, filter 0.45s ease;
+        }
+
+        .product-section:hover .product-image img {
+            transform: scale(1.08);
+            filter: brightness(1.05);
+        }
+        
+        .product-info {
+            padding: 25px;
+        }
+        
+        .product-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text);
+            letter-spacing: 1px;
+        }
+        
+        .product-subtitle {
+            font-size: 13px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+        }
+        
+        .product-description {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .product-colors {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .color-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .color-dot:hover {
+            border-color: #333;
+            transform: scale(1.1);
+        }
+        
+        .btn-explore {
+            display: inline-block;
+            background-color: #333;
+            color: white;
+            padding: 12px 28px;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border: 2px solid #333;
+        }
+        
+        .btn-explore:hover {
+            background-color: white;
+            color: #333;
+            transform: scale(1.05);
+        }
+        
+        /* Особенности */
+        .features-section {
+            background: #f9f9f9;
+            padding: 60px 40px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .feature-item {
+            text-align: center;
+        }
+        
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+        
+        .feature-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .feature-text {
+            font-size: 13px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.6;
+        }
+
+        .contact-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 34px 36px;
+            box-shadow: var(--shadow);
+            max-width: 1200px;
+            margin: 0 auto 40px;
+        }
+
+        .contact-section h2 {
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+
+        .contact-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 22px;
+            border-radius: 24px;
+            background: rgba(247, 115, 22, 0.06);
+            border: 1px solid rgba(247, 115, 22, 0.12);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+        }
+
+        .contact-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 40px rgba(247, 115, 22, 0.18), 0 0 0 1px rgba(247, 115, 22, 0.18);
+            background: rgba(247, 115, 22, 0.12);
+            border-color: rgba(247, 115, 22, 0.22);
+        }
+
+        .contact-item span {
+            font-size: 22px;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(247, 115, 22, 0.16);
+            color: var(--accent);
+            transition: box-shadow 0.25s ease, transform 0.25s ease;
+        }
+
+        .contact-item:hover span {
+            box-shadow: 0 0 0 14px rgba(247, 115, 22, 0.08);
+            transform: scale(1.05);
+        }
+
+        .contact-item p {
+            margin: 0;
+            color: var(--text);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .contact-item a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact-item:hover a {
+            color: #f77316;
+        }
+
+        @keyframes hoverGlow {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(247, 115, 22, 0.12);
+            }
+            50% {
+                box-shadow: 0 0 0 16px rgba(247, 115, 22, 0.04);
+            }
+        }
+
+        .contact-item:hover {
+            animation: hoverGlow 0.8s ease-in-out;
+        }
+        
+        footer {
+            background-color: var(--sidebar);
+            color: var(--sidebar-text);
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+            border-top: 2px solid var(--border);
+        }
+        
+        footer p {
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+            .main-content {
+                margin-left: 200px;
+                width: calc(100% - 200px);
+            }
+            .hero-content h2 {
+                font-size: 36px;
+            }
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            .sidebar ul li a {
+                display: inline-block;
+                margin: 0 10px;
+                padding: 10px 15px;
+            }
+            .products-grid {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            .hero-content h2 {
+                font-size: 28px;
+            }
+            header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Боковое меню -->
+    <aside class="sidebar">
+        <ul>
+            <li><a href="index.html">🏠<span> Главная</span></a></li>
+            <li><a href="#mens">👔<span> Мужские одежды</span></a></li>
+            <li><a href="#womens">👗<span> Женские одежды</span></a></li>
+            <li><a href="#support">📞<span> Служба поддержки</span></a></li>
+        </ul>
+    </aside>
+    
+    <div class="main-content">
+        <header>
+            <div class="logo-container" onclick="window.location.href='index.html'" title="Перейти на главную">
+                <svg width="50" height="50" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="40" font-weight="900" fill="currentColor" font-family="Arial">IYE</text>
+                </svg>
+            </div>
+            <h1>IYE - IYE - IYE</h1>
+            <button class="theme-toggle" id="theme-toggle" type="button">Тёмная тема</button>
+        </header>
+        
+        <div class="container">
+            <!-- Героическая секция -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <div class="hero-badge">Новинки сезона</div>
+                    <h2>IYE</h2>
+                    <p>DESIGNED FOR COMFORT. MADE TO LAST.</p>
+                    <p class="hero-tagline">Be you. Be IYE.</p>
+                </div>
+            </section>
+            
+            <!-- Сетка товаров -->
+            <section class="products-grid">
+                <!-- Товар 1: Худи -->
+                <div class="product-section">
+                    <div class="product-image">
+                        <img src="c:\Users\user\AppData\Roaming\Code\User\workspaceStorage\vscode-chat-images\image-1784703917621.png" alt="Худи IYE" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">Худи IYE</div>
+                        <div class="product-subtitle">PREMIUM COTTON</div>
+                        <p class="product-description">Комфортное худи из премиум хлопка. Идеально подходит для повседневного ношения.</p>
+                        <div class="product-colors">
+                            <div class="color-dot" style="background-color: #000;"></div>
+                            <div class="color-dot" style="background-color: #fff; border-color: #999;"></div>
+                            <div class="color-dot" style="background-color: #8b9db3;"></div>
+                            <div class="color-dot" style="background-color: #c4b5a0;"></div>
+                        </div>
+                        <a href="#" class="btn-explore">СМОТРЕТЬ</a>
+                    </div>
+                </div>
+                
+                <!-- Товар 2: Футболка -->
+                <div class="product-section">
+                    <div class="product-image">
+                        <img src="c:\Users\user\AppData\Roaming\Code\User\workspaceStorage\vscode-chat-images\image-1784704168491.png" alt="Футболка IYE" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">Футболка IYE</div>
+                        <div class="product-subtitle">SOFT TOUCH</div>
+                        <p class="product-description">Легкая и мягкая футболка для жаркого дня. Универсальный дизайн для всех.</p>
+                        <div class="product-colors">
+                            <div class="color-dot" style="background-color: #e8d4c8;"></div>
+                            <div class="color-dot" style="background-color: #d4b5a0;"></div>
+                            <div class="color-dot" style="background-color: #9d8b7e;"></div>
+                            <div class="color-dot" style="background-color: #5c5450;"></div>
+                        </div>
+                        <a href="#" class="btn-explore">СМОТРЕТЬ</a>
+                    </div>
+                </div>
+                
+                <!-- Товар 3: Кепка -->
+                <div class="product-section">
+                    <div class="product-image">
+                        <img src="c:\Users\user\Pictures\Screenshots\Снимок экрана 2026-07-22 171005.png" alt="Кепка IYE" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">Кепка IYE</div>
+                        <div class="product-subtitle">TIMELESS DESIGN</div>
+                        <p class="product-description">Стильная кепка с вышивкой логотипа IYE. Защита от солнца в любой сезон.</p>
+                        <div class="product-colors">
+                            <div class="color-dot" style="background-color: #000;"></div>
+                            <div class="color-dot" style="background-color: #fff; border-color: #999;"></div>
+                            <div class="color-dot" style="background-color: #e8b4a8;"></div>
+                        </div>
+                        <a href="#" class="btn-explore">СМОТРЕТЬ</a>
+                    </div>
+                </div>
+                
+                <!-- Товар 4: Свитшот -->
+                <div class="product-section">
+                    <div class="product-image">
+                        <img src="c:\Users\user\Pictures\Screenshots\Снимок экрана 2026-07-22 174703.png" alt="Свитшот IYE" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">Свитшот IYE</div>
+                        <div class="product-subtitle">OVERSIZED FIT</div>
+                        <p class="product-description">Свободный кроевой свитшот для максимального комфорта. Современный стиль.</p>
+                        <div class="product-colors">
+                            <div class="color-dot" style="background-color: #c4b5c8;"></div>
+                            <div class="color-dot" style="background-color: #8ba39d;"></div>
+                            <div class="color-dot" style="background-color: #b3c8d4;"></div>
+                            <div class="color-dot" style="background-color: #d4c8b3;"></div>
+                        </div>
+                        <a href="#" class="btn-explore">СМОТРЕТЬ</a>
+                    </div>
+                </div>
+                
+                <!-- Товар 5: Брюки -->
+                <div class="product-section">
+                    <div class="product-image">
+                        <img src="c:\Users\user\Pictures\Screenshots\Снимок экрана 2026-07-22 175616.png" alt="Брюки IYE" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">Брюки IYE</div>
+                        <div class="product-subtitle">COMFORTABLE FIT</div>
+                        <p class="product-description">Удобные брюки из качественного материала. Подходят для любого случая.</p>
+                        <div class="product-colors">
+                            <div class="color-dot" style="background-color: #000;"></div>
+                            <div class="color-dot" style="background-color: #696969;"></div>
+                            <div class="color-dot" style="background-color: #c4b5a0;"></div>
+                        </div>
+                        <a href="#" class="btn-explore">СМОТРЕТЬ</a>
+                    </div>
+                </div>
+                
+                <!-- Товар 6: Куртка -->
+                <div class="product-section">
+                    <div class="product-image">
+                        <img src="c:\Users\user\Pictures\Screenshots\Снимок экрана 2026-07-22 175923.png" alt="Куртка IYE" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">Куртка IYE</div>
+                        <div class="product-subtitle">DURABLE QUALITY</div>
+                        <p class="product-description">Прочная и стильная куртка на все сезоны. Водоотталкивающий материал.</p>
+                        <div class="product-colors">
+                            <div class="color-dot" style="background-color: #000;"></div>
+                            <div class="color-dot" style="background-color: #3a3a3a;"></div>
+                            <div class="color-dot" style="background-color: #666;"></div>
+                        </div>
+                        <a href="#" class="btn-explore">СМОТРЕТЬ</a>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Особенности -->
+            <section class="features-section">
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">👗</div>
+                        <div class="feature-title">Женственная Эстетика</div>
+                        <div class="feature-text">Минимальный, современный дизайн</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🎨</div>
+                        <div class="feature-title">Модные Цвета</div>
+                        <div class="feature-text">Актуальные палитры на каждый сезон</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">☁️</div>
+                        <div class="feature-title">Мягкий Материал</div>
+                        <div class="feature-text">Комфорт в каждом носке</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">✨</div>
+                        <div class="feature-title">Отличное Качество</div>
+                        <div class="feature-text">Долговечное и надежное</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">❤️</div>
+                        <div class="feature-title">Сделано с Любовью</div>
+                        <div class="feature-text">Каждый предмет - произведение искусства</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">⏱️</div>
+                        <div class="feature-title">Вечный Стиль</div>
+                        <div class="feature-text">Актуально в любое время</div>
+                    </div>
+                </div>
+            </section>
+            <section class="contact-section" id="support">
+                <h2>Контактные данные</h2>
+                <div class="contact-list">
+                    <div class="contact-item">
+                        <span>✈️</span>
+                        <div>
+                            <p>Telegram</p>
+                            <p><a href="https://t.me/northern_stormm" target="_blank">IYE store</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span>📷</span>
+                        <div>
+                            <p>Instagram</p>
+                            <p><a href="https://instagram.com/yourusername" target="_blank">@yourusername</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span>✉️</span>
+                        <div>
+                            <p>Gmail</p>
+                            <p><a href="mailto:azizraimjanov2001@gmail.com">azizraimjanov2001@gmail.com</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span>📞</span>
+                        <div>
+                            <p>Телефон</p>
+                            <p><a href="tel:+998946051130">+998946051130</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span>🔗</span>
+                        <div>
+                            <p>Отправить ссылку</p>
+                            <p><a href="https://t.me/share/url?url=https://t.me/northern_stormm&text=IYE%20store%20-%20посмотри%20магазин" target="_blank">Поделиться</a></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p>&copy; 2024 IYE - Designed for Comfort. Made to Last. | Be you. Be IYE.</p>
+        </footer>
+    </div>
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const root = document.documentElement;
+        const savedTheme = localStorage.getItem('iyeTheme');
+        const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+
+        function applyTheme(theme) {
+            root.setAttribute('data-theme', theme);
+            themeToggle.textContent = theme === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+            localStorage.setItem('iyeTheme', theme);
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const nextTheme = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            applyTheme(nextTheme);
+        });
+
+        applyTheme(savedTheme || preferred);
+    </script>
+</body>
+</html>
