@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IYE - Главная</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f1f3f6;
+            --surface: rgba(255, 255, 255, 0.88);
+            --surface-strong: #ffffff;
+            --text: #1d1d1d;
+            --muted: #6d747e;
+            --primary: #0f172a;
+            --accent: #f7724c;
+            --accent-soft: #fee8e0;
+            --border: rgba(15, 23, 42, 0.12);
+            --shadow: 0 24px 80px rgba(15, 23, 42, 0.08);
+            --sidebar: #111827;
+            --sidebar-text: #f8fafc;
+            --hero-start: #eef2ff;
+            --hero-end: #ffffff;
+        }
+
+        [data-theme='dark'] {
+            color-scheme: dark;
+            --bg: #090b12;
+            --surface: rgba(15, 23, 42, 0.88);
+            --surface-strong: #111827;
+            --text: #f8fafc;
+            --muted: #9ca3af;
+            --primary: #f8fafc;
+            --accent: #f97316;
+            --accent-soft: rgba(249, 115, 22, 0.14);
+            --border: rgba(255, 255, 255, 0.08);
+            --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+            --sidebar: #0f172a;
+            --sidebar-text: #e2e8f0;
+            --hero-start: #111827;
+            --hero-end: #1f2937;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background: radial-gradient(circle at top left, rgba(247, 115, 22, 0.12), transparent 25%), var(--bg);
+            color: var(--text);
+            display: flex;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, var(--sidebar), #0b1122);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 32px 20px;
+            box-shadow: 4px 0 30px rgba(0, 0, 0, 0.18);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            font-size: 18px;
+            color: var(--accent);
+            margin-bottom: 18px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar ul li a {
+            display: block;
+            color: var(--sidebar-text);
+            padding: 14px 18px;
+            text-decoration: none;
+            font-size: 15px;
+            transition: all 0.25s ease;
+            border-left: 3px solid transparent;
+            position: relative;
+            border-radius: 14px;
+        }
+
+        .sidebar ul li a:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-left-color: var(--accent);
+            color: white;
+            transform: translateX(2px);
+        }
+
+        .sidebar ul li a::before {
+            content: '';
+            position: absolute;
+            left: 16px;
+            bottom: 8px;
+            width: 0;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            transition: width 0.25s ease;
+        }
+
+        .sidebar ul li a:hover::before {
+            width: calc(100% - 32px);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.88);
+            color: var(--text);
+            padding: 28px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(14px);
+        }
+
+        [data-theme='dark'] header {
+            background: rgba(15, 23, 42, 0.88);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .logo-container {
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-container:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-container svg {
+            height: 56px;
+            width: auto;
+        }
+
+        header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        .theme-toggle {
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: var(--surface-strong);
+            color: var(--text);
+            padding: 12px 18px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 16px 35px rgba(15, 23, 42, 0.12);
+        }
+
+        .container {
+            flex-grow: 1;
+            width: 100%;
+            max-width: 100%;
+            overflow-y: auto;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--hero-start), var(--hero-end));
+            padding: 80px 40px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-section,
+        .product-section,
+        .features-section,
+        .feature-item,
+        .product-image,
+        .product-info {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: transform 0.7s ease, opacity 0.7s ease;
+        }
+
+        .reveal-visible {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        .hero-content h2 {
+            font-size: 56px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 18px;
+            color: var(--primary);
+        }
+
+        .hero-content p {
+            font-size: 20px;
+            color: var(--muted);
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-tagline {
+            font-size: 18px;
+            color: var(--accent);
+            font-weight: 600;
+            margin-top: 30px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            padding: 48px 36px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .product-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            cursor: pointer;
+            min-height: 520px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-section:hover {
+            transform: translateY(-12px);
+            border-color: rgba(247, 115, 22, 0.22);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 320px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.65), rgba(241, 244, 246, 0.65));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-badge {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 16px;
+            color: white;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.0) 0%, rgba(0, 0, 0, 0.45) 100%);
+            z-index: 1;
+        }
+
+        .product-image:hover img {
+            transform: scale(1.05);
+        }
+
+        .product-section:hover .product-image img {
+            transform: scale(1.04);
+        }
+
+        .product-info {
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            flex-grow: 1;
+        }
+
+        .product-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text);
+            letter-spacing: 0.3px;
+        }
+
+        .product-subtitle {
+            font-size: 13px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+        }
+
+        .product-description {
+            font-size: 15px;
+            color: var(--muted);
+            line-height: 1.8;
+            margin-bottom: 18px;
+        }
+
+        .product-colors {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .color-dot {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+
+        .color-dot:hover {
+            border-color: var(--accent);
+            transform: scale(1.15);
+        }
+
+        .btn-explore {
+            margin-top: auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--accent), #fbbf24);
+            color: white;
+            padding: 14px 28px;
+            text-decoration: none;
+            border-radius: 999px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            font-size: 14px;
+            font-weight: 700;
+            border: none;
+        }
+
+        .btn-explore:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 30px rgba(247, 115, 22, 0.25);
+        }
+
+        .features-section {
+            background: transparent;
+            padding: 60px 40px 100px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-item {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: transform 0.7s ease, opacity 0.7s ease;
+        }
+
+        .feature-item {
+            text-align: center;
+            background: var(--surface-strong);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px 24px;
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+        }
+
+        .feature-icon {
+            font-size: 42px;
+            margin-bottom: 18px;
+        }
+
+        .feature-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 10px;
+            letter-spacing: 0.8px;
+        }
+
+        .feature-text {
+            font-size: 14px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.8;
+        }
+
+        footer {
+            background: transparent;
+            color: var(--muted);
+            text-align: center;
+            padding: 30px 40px 60px;
+            margin-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        footer p {
+            font-size: 13px;
+            letter-spacing: 0.9px;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 220px;
+            }
+            .main-content {
+                margin-left: 220px;
+                width: calc(100% - 220px);
+            }
+            .hero-content h2 {
+                font-size: 44px;
+            }
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-bottom: 1px solid var(--border);
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 18px;
+            }
+            .sidebar ul li a {
+                display: inline-block;
+                margin: 0 8px 10px;
+                padding: 10px 15px;
+            }
+            .products-grid {
+                grid-template-columns: 1fr;
+                padding: 24px;
+            }
+            .hero-content h2 {
+                font-size: 32px;
+            }
+            header h1 {
+                font-size: 24px;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <ul>
+            <li><a href="index.html">🏠 Главная</a></li>
+            <li><a href="Untitled-1.html">👔 Мужские одежды</a></li>
+            <li><a href="#womens">👗 Женские одежды</a></li>
+            <li><a href="#support">📞 Служба поддержки</a></li>
+        </ul>
+    </aside>
+    
+    <div class="main-content">
+        <header>
+            <div class="header-left">
+                <div class="logo-container" onclick="window.location.href='index.html'" title="Перейти на главную">
+                    <svg width="50" height="50" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="40" font-weight="900" fill="currentColor" font-family="Arial">IYE</text>
+                    </svg>
+                </div>
+                <div>
+                    <h1>Главная страница IYE</h1>
+                    <p style="color: var(--muted); font-size: 14px; margin-top: 6px;">Модная витрина бренда IYE с новыми коллекциями</p>
+                </div>
+            </div>
+            <button class="theme-toggle" id="theme-toggle" type="button">Тёмная тема</button>
+        </header>
+        
+        <div class="container">
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h2>Добро пожаловать на IYE</h2>
+                    <p>DESIGNED FOR COMFORT. MADE TO LAST.</p>
+                    <p class="hero-tagline">Be you. Be IYE.</p>
+                </div>
+            </section>
+            
+            <section class="products-grid">
+                <div class="product-section">
+                    <div class="product-image">
+                        <img src="Снимок экрана 2026-07-22 143058.png" alt="Худи IYE">
+                        <div class="product-badge">Худи</div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">Худи IYE</div>
+                        <div class="product-subtitle">PREMIUM COTTON</div>
+                        <p class="product-description">Комфортное худи из премиум хлопка. Идеально подходит для повседневного ношения.</p>
+                        <div class="product-colors">
+                            <div class="color-dot" style="background-color: #000;"></div>
+                            <div class="color-dot" style="background-color: #fff; border-color: #999;"></div>
+                            <div class="color-dot" style="background-color: #8b9db3;"></div>
+                            <div class="color-dot" style="background-color: #c4b5a0;"></div>
+                        </div>
+                        <a href="#" class="btn-explore">СМОТРЕТЬ</a>
+                    </div>
+                </div>
+                <div class="product-section">
+                    <div class="product-image">
+                        <img src="Untitled.png" alt="Футболка IYE">
+                        <div class="product-badge">Футболка</div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">Футболка IYE</div>
+                        <div class="product-subtitle">SOFT TOUCH</div>
+                        <p class="product-description">Легкая и мягкая футболка для жаркого дня. Универсальный дизайн для всех.</p>
+                        <div class="product-colors">
+                            <div class="color-dot" style="background-color: #e8d4c8;"></div>
+                            <div class="color-dot" style="background-color: #d4b5a0;"></div>
+                            <div class="color-dot" style="background-color: #9d8b7e;"></div>
+                            <div class="color-dot" style="background-color: #5c5450;"></div>
+                        </div>
+                        <a href="#" class="btn-explore">СМОТРЕТЬ</a>
+                    </div>
+                </div>
+                <div class="product-section">
+                    <div class="product-image">
+                        <img src="c:\Users\user\Pictures\Screenshots\Снимок экрана 2026-07-22 143238.png" alt="Кепка IYE">
+                        <div class="product-badge">Кепка</div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">Кепка IYE</div>
+                        <div class="product-subtitle">TIMELESS DESIGN</div>
+                        <p class="product-description">Стильная кепка с вышивкой логотипа IYE. Защита от солнца в любой сезон.</p>
+                        <div class="product-colors">
+                            <div class="color-dot" style="background-color: #000;"></div>
+                            <div class="color-dot" style="background-color: #fff; border-color: #999;"></div>
+                            <div class="color-dot" style="background-color: #e8b4a8;"></div>
+                        </div>
+                        <a href="#" class="btn-explore">СМОТРЕТЬ</a>
+                    </div>
+                </div>
+                <div class="product-section">
+                    <div class="product-image">
+                        <img src="c:\Users\user\Pictures\Screenshots\Снимок экрана 2026-07-22 143058.png" alt="Свитшот IYE">
+                        <div class="product-badge">Свитшот</div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">Свитшот IYE</div>
+                        <div class="product-subtitle">OVERSIZED FIT</div>
+                        <p class="product-description">Свободный кроевой свитшот для максимального комфорта. Современный стиль.</p>
+                        <div class="product-colors">
+                            <div class="color-dot" style="background-color: #c4b5c8;"></div>
+                            <div class="color-dot" style="background-color: #8ba39d;"></div>
+                            <div class="color-dot" style="background-color: #b3c8d4;"></div>
+                            <div class="color-dot" style="background-color: #d4c8b3;"></div>
+                        </div>
+                        <a href="#" class="btn-explore">СМОТРЕТЬ</a>
+                    </div>
+                </div>
+                <div class="product-section">
+                    <div class="product-image">
+                        <img src="c:\Users\user\Pictures\Screenshots\Снимок экрана 2026-07-22 143212.png" alt="Брюки IYE">
+                        <div class="product-badge">Брюки</div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">Брюки IYE</div>
+                        <div class="product-subtitle">COMFORTABLE FIT</div>
+                        <p class="product-description">Удобные брюки из качественного материала. Подходят для любого случая.</p>
+                        <div class="product-colors">
+                            <div class="color-dot" style="background-color: #000;"></div>
+                            <div class="color-dot" style="background-color: #696969;"></div>
+                            <div class="color-dot" style="background-color: #c4b5a0;"></div>
+                        </div>
+                        <a href="#" class="btn-explore">СМОТРЕТЬ</a>
+                    </div>
+                </div>
+                <div class="product-section">
+                    <div class="product-image">
+                        <img src="c:\Users\user\Pictures\Screenshots\Снимок экрана 2026-07-22 143156.png" alt="Куртка IYE">
+                        <div class="product-badge">Куртка</div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">Куртка IYE</div>
+                        <div class="product-subtitle">DURABLE QUALITY</div>
+                        <p class="product-description">Прочная и стильная куртка на все сезоны. Водоотталкивающий материал.</p>
+                        <div class="product-colors">
+                            <div class="color-dot" style="background-color: #000;"></div>
+                            <div class="color-dot" style="background-color: #3a3a3a;"></div>
+                            <div class="color-dot" style="background-color: #666;"></div>
+                        </div>
+                        <a href="#" class="btn-explore">СМОТРЕТЬ</a>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="features-section">
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">👗</div>
+                        <div class="feature-title">Женственная Эстетика</div>
+                        <div class="feature-text">Минимальный, современный дизайн</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🎨</div>
+                        <div class="feature-title">Модные Цвета</div>
+                        <div class="feature-text">Актуальные палитры на каждый сезон</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">☁️</div>
+                        <div class="feature-title">Мягкий Материал</div>
+                        <div class="feature-text">Комфорт в каждом носке</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">✨</div>
+                        <div class="feature-title">Отличное Качество</div>
+                        <div class="feature-text">Долговечное и надежное</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">❤️</div>
+                        <div class="feature-title">Сделано с Любовью</div>
+                        <div class="feature-text">Каждый предмет - произведение искусства</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">⏱️</div>
+                        <div class="feature-title">Вечный Стиль</div>
+                        <div class="feature-text">Актуально в любое время</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p>&copy; 2024 IYE - Designed for Comfort. Made to Last. | Be you. Be IYE.</p>
+        </footer>
+    </div>
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const root = document.documentElement;
+        const savedTheme = localStorage.getItem('iyeTheme');
+        const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+
+        function applyTheme(theme) {
+            root.setAttribute('data-theme', theme);
+            themeToggle.textContent = theme === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+            localStorage.setItem('iyeTheme', theme);
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const nextTheme = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            applyTheme(nextTheme);
+        });
+
+        function initScrollReveal() {
+            const revealElements = document.querySelectorAll('.hero-section, .product-section, .features-section, .feature-item');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('reveal-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.2,
+                rootMargin: '0px 0px -80px 0px'
+            });
+
+            revealElements.forEach(el => observer.observe(el));
+        }
+
+        applyTheme(savedTheme || preferred);
+        initScrollReveal();
+    </script>
+</body>
+</html>
