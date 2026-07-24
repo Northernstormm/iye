@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Худи — IYE</title>
+  <style>
+    :root{--bg:#fff;--text:#111;--muted:#666;--accent:#f77316;--surface:#f7f7f8;--shadow:0 12px 30px rgba(15,23,42,0.06)}
+    [data-theme="dark"]{--bg:#0b0f14;--text:#e6eef6;--muted:#9aa6b2;--surface:#071018;--shadow:0 18px 40px rgba(0,0,0,0.6)}
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Arial,Helvetica,sans-serif}
+    .app{display:flex;min-height:100vh}
+    .sidebar{width:72px;background:var(--surface);transition:width .25s ease;overflow:hidden}
+    .sidebar:hover{width:220px}
+    .sidebar ul{list-style:none;padding:18px;margin:0}
+    .sidebar a{display:block;color:var(--text);text-decoration:none;padding:12px;border-radius:10px}
+    .main{flex:1;padding:28px}
+    header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}
+    .theme-toggle{background:transparent;border:1px solid var(--border, #e6e9ee);padding:8px 12px;border-radius:10px;cursor:pointer}
+    .product-hero{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center}
+    .product-card{background:var(--surface);padding:26px;border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+    .product-image{width:100%;height:420px;overflow:hidden;border-radius:12px}
+    .product-image img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease,filter .6s ease}
+    .product-card:hover .product-image img{transform:scale(1.06);filter:brightness(1.03)}
+    .cta{display:inline-block;background:linear-gradient(135deg,var(--accent),#fbbf24);color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none}
+    .reveal{opacity:0;transform:translateY(20px);transition:all .7s ease}
+    .reveal.visible{opacity:1;transform:none}
+    @media(max-width:900px){.product-hero{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <ul>
+        <li><a href="index.html">🏠 Главная</a></li>
+        <li><a href="Untitled-1.html">🛍️ Магазин</a></li>
+      </ul>
+    </aside>
+    <main class="main">
+      <header>
+        <div>
+          <h1>Худи IYE</h1>
+          <div style="color:var(--muted);font-size:14px">PREMIUM COTTON • Универсально</div>
+        </div>
+        <button id="themeToggle" class="theme-toggle">Тёмная тема</button>
+      </header>
+
+      <section class="product-hero">
+        <div class="product-card reveal">
+          <div style="margin-bottom:18px"><strong>Описание</strong></div>
+          <p style="color:var(--muted);line-height:1.6">Комфортное худи IYE из премиального хлопка — мягкое, тёплое и долговечное. Идеально для повседневного стиля.</p>
+          <ul style="color:var(--muted);margin-top:18px">
+            <li>100% premium cotton</li>
+            <li>Тёплая и дышащая структура</li>
+            <li>Доступно в нескольких цветах</li>
+          </ul>
+          <div style="margin-top:20px"><a class="cta" href="#">Купить</a></div>
+        </div>
+        <div class="product-image reveal">
+          <img src="photo_2025-12-17_10-19-40.jpg" alt="Худи IYE">
+        </div>
+      </section>
+      <script>
+        const root=document.documentElement,btn=document.getElementById('themeToggle');
+        const saved=localStorage.getItem('iyeTheme');
+        function setTheme(t){root.setAttribute('data-theme',t);btn.textContent=t==='dark'?'Светлая тема':'Тёмная тема';localStorage.setItem('iyeTheme',t)}
+        btn.addEventListener('click',()=>setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark'));
+        setTheme(saved||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
+        const obs=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})},{threshold:0.15});
+        document.querySelectorAll('.reveal').forEach(n=>obs.observe(n));
+      </script>
+    </main>
+  </div>
+</body>
+</html>
